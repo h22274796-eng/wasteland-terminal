@@ -2,157 +2,26 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siberia-7 Heavy Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Siberia-7 Terminal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --glow-color: #00ff41;
-            --bg-color: #0d0d0d;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--glow-color);
-            font-family: 'Courier New', monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 20px;
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            text-shadow: 0 0 5px var(--glow-color);
-        }
-
-        /* Эффект ЭЛТ-монитора */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        .monitor {
-            border: 3px solid var(--glow-color);
-            padding: 25px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: inset 0 0 20px var(--glow-color), 0 0 15px var(--glow-color);
-            background: rgba(0, 255, 65, 0.02);
-            position: relative;
-            z-index: 5;
-            box-sizing: border-box;
-        }
-
-        h2 {
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 0;
-            font-size: 22px;
-            animation: glitch 3s infinite;
-        }
-
-        .stats-container { margin: 20px 0; }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
-            padding-bottom: 5px;
-        }
-
-        .stat-label { font-size: 16px; font-weight: bold; }
-        .stat-value { font-size: 20px; font-weight: 900; }
-
-        .console-log {
-            width: 100%;
-            max-width: 450px;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--glow-color);
-            margin-top: 20px;
-            padding: 10px;
-            font-size: 12px;
-            overflow-y: auto;
-            color: #008f11;
-            box-sizing: border-box;
-            z-index: 5;
-        }
-
-        .button-group {
-            width: 100%;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-            z-index: 5;
-        }
-
-        .btn {
-            background: var(--glow-color);
-            color: var(--bg-color);
-            border: none;
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 0 10px var(--glow-color);
-        }
-
-        .btn-exit {
-            background: #ff4100;
-            box-shadow: 0 0 10px #ff4100;
-        }
-
-        @keyframes glitch {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
+        body { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; height: 100vh; overflow: hidden; }
+        .monitor { border: 2px solid #00ff41; padding: 20px; width: 90%; box-shadow: 0 0 15px #00ff41; background: rgba(0, 255, 65, 0.05); margin-bottom: 20px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 65, 0.2); font-size: 1.2em; }
+        .btn { background: #00ff41; color: #0d0d0d; border: none; padding: 20px; margin-top: 10px; font-weight: bold; width: 100%; text-transform: uppercase; cursor: pointer; }
+        .console { width: 90%; height: 100px; background: #000; border: 1px solid #004411; padding: 10px; font-size: 11px; overflow-y: auto; color: #008f11; }
     </style>
 </head>
 <body>
-
     <div class="monitor">
-        <h2>Terminal: Siberia-7</h2>
-        <div class="stats-container">
-            <div class="stat-row">
-                <span class="stat-label">БИОМАССА:</span>
-                <span id="bio" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">ЛОМ:</span>
-                <span id="scrap" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">ЭНЕРГИЯ:</span>
-                <span id="energy" class="stat-value">100%</span>
-            </div>
-        </div>
+        <h2 style="text-align: center; margin-top: 0;">TERMINAL v1.1.0</h2>
+        <div class="stat-row"><span>ЛОМ:</span> <span id="scrap">0</span></div>
+        <div class="stat-row"><span>ЭНЕРГИЯ:</span> <span id="energy">100%</span></div>
     </div>
-
-    <div id="log" class="console-log">
-        > Инициализация протокола связи...<br>
-        > Соединение установлено.
-    </div>
-
-    <div class="button-group">
-        <button class="btn" onclick="runRaid()">Выйти в рейд</button>
-        <button id="exitBtn" class="btn btn-exit" onclick="saveAndExit()">Завершить сеанс</button>
-    </div>
+    <div id="log" class="console">> СИСТЕМА ГОТОВА...</div>
+    <button class="btn" onclick="runRaid()">ВЫЙТИ В РЕЙД (+15)</button>
+    <button class="btn" style="background: #ff4100;" onclick="saveAndExit()">СОХРАНИТЬ И ВЫЙТИ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
@@ -162,38 +31,25 @@
         let baseScrap = parseInt(params.get('scrap')) || 0;
         let earned = 0;
 
-        document.getElementById('bio').innerText = params.get('bio') || '10';
         document.getElementById('scrap').innerText = baseScrap;
         document.getElementById('energy').innerText = (params.get('energy') || '100') + '%';
-
-        function addLog(msg) {
-            const log = document.getElementById('log');
-            const time = new Date().toLocaleTimeString();
-            log.innerHTML += `<br>[${time}] > ${msg}`;
-            log.scrollTop = log.scrollHeight;
-        }
 
         function runRaid() {
             earned += 15;
             document.getElementById('scrap').innerText = baseScrap + earned;
-            addLog("Рейд успешен. Ресурсы собраны.");
+            const log = document.getElementById('log');
+            log.innerHTML += "<br>> Найдено ресурсов...";
+            log.scrollTop = log.scrollHeight;
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
         function saveAndExit() {
-            const btn = document.getElementById('exitBtn');
-            btn.disabled = true; // Блокируем кнопку, чтобы не нажали дважды
-            
             if (earned > 0) {
-                addLog("СИНХРОНИЗАЦИЯ...");
-                
-                // 1. Отправляем данные
+                // ОТПРАВКА ДАННЫХ
                 tg.sendData("save_scrap:" + earned);
-                
-                // 2. Страховка: если окно не закрылось само через 0.6 сек, закрываем принудительно
-                setTimeout(() => {
-                    tg.close();
-                }, 600);
+                // После sendData окно должно закрыться само. 
+                // Если не закрывается в течение секунды - закрываем силой.
+                setTimeout(() => { tg.close(); }, 1000);
             } else {
                 tg.close();
             }
