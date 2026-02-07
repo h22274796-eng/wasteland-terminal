@@ -6,7 +6,6 @@
     <title>Siberia-7 Heavy Terminal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Основные настройки экрана */
         :root {
             --glow-color: #00ff41;
             --bg-color: #0d0d0d;
@@ -27,7 +26,7 @@
             text-shadow: 0 0 5px var(--glow-color);
         }
 
-        /* Эффект сканирующей линии (CRT монитор) */
+        /* Эффект ЭЛТ-монитора */
         body::before {
             content: " ";
             display: block;
@@ -40,7 +39,6 @@
             pointer-events: none;
         }
 
-        /* Главный контейнер монитора */
         .monitor {
             border: 3px solid var(--glow-color);
             padding: 25px;
@@ -62,10 +60,7 @@
             animation: glitch 3s infinite;
         }
 
-        /* Стили характеристик */
-        .stats-container {
-            margin: 20px 0;
-        }
+        .stats-container { margin: 20px 0; }
 
         .stat-row {
             display: flex;
@@ -76,17 +71,9 @@
             padding-bottom: 5px;
         }
 
-        .stat-label {
-            font-size: 16px;
-            font-weight: bold;
-        }
+        .stat-label { font-size: 16px; font-weight: bold; }
+        .stat-value { font-size: 20px; font-weight: 900; }
 
-        .stat-value {
-            font-size: 20px;
-            font-weight: 900;
-        }
-
-        /* Лог событий */
         .console-log {
             width: 100%;
             max-width: 450px;
@@ -102,7 +89,6 @@
             z-index: 5;
         }
 
-        /* Кнопки */
         .button-group {
             width: 100%;
             max-width: 450px;
@@ -123,13 +109,7 @@
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.2s;
             box-shadow: 0 0 10px var(--glow-color);
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-            filter: brightness(1.2);
         }
 
         .btn-exit {
@@ -137,20 +117,17 @@
             box-shadow: 0 0 10px #ff4100;
         }
 
-        /* Анимация пульсации */
         @keyframes glitch {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
             100% { opacity: 1; }
         }
-
     </style>
 </head>
 <body>
 
     <div class="monitor">
         <h2>Terminal: Siberia-7</h2>
-        
         <div class="stats-container">
             <div class="stat-row">
                 <span class="stat-label">БИОМАССА:</span>
@@ -169,12 +146,12 @@
 
     <div id="log" class="console-log">
         > Инициализация протокола связи...<br>
-        > Соединение с базой Neon установлено.
+        > Соединение установлено.
     </div>
 
     <div class="button-group">
         <button class="btn" onclick="runRaid()">Выйти в рейд</button>
-        <button class="btn btn-exit" onclick="saveAndExit()">Завершить сеанс</button>
+        <button id="exitBtn" class="btn btn-exit" onclick="saveAndExit()">Завершить сеанс</button>
     </div>
 
     <script>
@@ -185,7 +162,6 @@
         let baseScrap = parseInt(params.get('scrap')) || 0;
         let earned = 0;
 
-        // Первичная отрисовка
         document.getElementById('bio').innerText = params.get('bio') || '10';
         document.getElementById('scrap').innerText = baseScrap;
         document.getElementById('energy').innerText = (params.get('energy') || '100') + '%';
@@ -201,16 +177,23 @@
             earned += 15;
             document.getElementById('scrap').innerText = baseScrap + earned;
             addLog("Рейд успешен. Ресурсы собраны.");
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
         function saveAndExit() {
+            const btn = document.getElementById('exitBtn');
+            btn.disabled = true; // Блокируем кнопку, чтобы не нажали дважды
+            
             if (earned > 0) {
-                addLog("Синхронизация данных...");
+                addLog("СИНХРОНИЗАЦИЯ...");
+                
+                // 1. Отправляем данные
                 tg.sendData("save_scrap:" + earned);
+                
+                // 2. Страховка: если окно не закрылось само через 0.6 сек, закрываем принудительно
+                setTimeout(() => {
+                    tg.close();
+                }, 600);
             } else {
                 tg.close();
             }
