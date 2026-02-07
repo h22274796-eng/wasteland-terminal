@@ -2,30 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Siberia-7 Terminal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; height: 100vh; overflow: hidden; }
         .monitor { border: 2px solid #00ff41; padding: 20px; width: 90%; box-shadow: 0 0 15px #00ff41; background: rgba(0, 255, 65, 0.05); margin-bottom: 20px; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 65, 0.2); font-size: 1.2em; }
-        .btn { background: #00ff41; color: #0d0d0d; border: none; padding: 20px; margin-top: 10px; font-weight: bold; width: 100%; text-transform: uppercase; cursor: pointer; }
-        .console { width: 90%; height: 100px; background: #000; border: 1px solid #004411; padding: 10px; font-size: 11px; overflow-y: auto; color: #008f11; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 65, 0.2); font-size: 1.4em; }
+        .btn-raid { background: #00ff41; color: #0d0d0d; border: none; padding: 25px; margin-top: 20px; font-weight: bold; width: 100%; text-transform: uppercase; font-size: 18px; cursor: pointer; }
+        .console { width: 90%; height: 120px; background: #000; border: 1px solid #004411; padding: 10px; font-size: 12px; overflow-y: auto; color: #008f11; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="monitor">
-        <h2 style="text-align: center; margin-top: 0;">TERMINAL v1.1.0</h2>
+        <h2 style="text-align: center; margin-top: 0;">TERMINAL v1.1.2</h2>
         <div class="stat-row"><span>ЛОМ:</span> <span id="scrap">0</span></div>
         <div class="stat-row"><span>ЭНЕРГИЯ:</span> <span id="energy">100%</span></div>
     </div>
-    <div id="log" class="console">> СИСТЕМА ГОТОВА...</div>
-    <button class="btn" onclick="runRaid()">ВЫЙТИ В РЕЙД (+15)</button>
-    <button class="btn" style="background: #ff4100;" onclick="saveAndExit()">СОХРАНИТЬ И ВЫЙТИ</button>
+    
+    <div id="log" class="console">> СИСТЕМА ОЖИДАНИЯ...</div>
+
+    <button class="btn-raid" onclick="runRaid()">ВЫЙТИ В РЕЙД (+15)</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Настраиваем главную кнопку сохранения Telegram
+        tg.MainButton.setText("СОХРАНИТЬ И ВЫЙТИ");
+        tg.MainButton.textColor = "#0d0d0d";
+        tg.MainButton.color = "#00ff41";
+        tg.MainButton.show(); // Показываем её сразу
 
         const params = new URLSearchParams(window.location.search);
         let baseScrap = parseInt(params.get('scrap')) || 0;
@@ -38,22 +45,22 @@
             earned += 15;
             document.getElementById('scrap').innerText = baseScrap + earned;
             const log = document.getElementById('log');
-            log.innerHTML += "<br>> Найдено ресурсов...";
+            log.innerHTML += "<br>> Ресурсы найдены. Подготовка к передаче...";
             log.scrollTop = log.scrollHeight;
+            
+            // Если начали добывать, делаем кнопку заметнее
+            tg.MainButton.setParams({ text: `СОХРАНИТЬ (${earned} ЛОМА)` });
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
-        function saveAndExit() {
+        // Слушаем нажатие на ту самую системную кнопку Telegram
+        tg.onEvent('mainButtonClicked', function(){
             if (earned > 0) {
-                // ОТПРАВКА ДАННЫХ
                 tg.sendData("save_scrap:" + earned);
-                // После sendData окно должно закрыться само. 
-                // Если не закрывается в течение секунды - закрываем силой.
-                setTimeout(() => { tg.close(); }, 1000);
             } else {
                 tg.close();
             }
-        }
+        });
     </script>
 </body>
 </html>
