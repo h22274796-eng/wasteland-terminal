@@ -7,40 +7,38 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .monitor { border: 2px solid #00ff41; padding: 15px; width: 90%; box-shadow: 0 0 15px #00ff41; background: rgba(0, 255, 65, 0.05); }
+        .monitor { border: 2px solid #00ff41; padding: 15px; width: 90%; box-shadow: 0 0 15px #00ff41; background: rgba(0, 255, 65, 0.05); margin-bottom: 20px;}
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 65, 0.3); }
-        .btn { background: #00ff41; color: #0d0d0d; border: none; padding: 15px 30px; margin-top: 20px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
-        .glitch { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .btn { background: #00ff41; color: #0d0d0d; border: none; padding: 15px; margin-top: 10px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
     </style>
 </head>
 <body>
     <div class="monitor">
-        <h2 class="glitch"> СТАТУС ОБЪЕКТА: СИБИРЬ-7 </h2>
+        <h2 style="text-align: center;"> ТЕРМИНАЛ: СИБИРЬ-7 </h2>
         <div class="stat-row"><span>БИОМАССА:</span> <span id="bio">0</span></div>
         <div class="stat-row"><span>ЛОМ:</span> <span id="scrap">0</span></div>
         <div class="stat-row"><span>ЭНЕРГИЯ:</span> <span id="energy">0%</span></div>
     </div>
 
     <button class="btn" onclick="startRaid()">Выйти в рейд (+15 лома)</button>
-    <button class="btn" style="background: #ff4100;" onclick="tgClose()">Закрыть терминал</button>
+    <button class="btn" style="background: #555; color: #fff;" onclick="location.reload()">🔄 ОБНОВИТЬ СТАТУС</button>
+    <button class="btn" style="background: #ff4100;" onclick="tg.close()">ЗАКРЫТЬ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Читаем данные, которые прислал бот в ссылке
-        const urlParams = new URLSearchParams(window.location.search);
-        document.getElementById('bio').innerText = urlParams.get('bio') || '0';
-        document.getElementById('scrap').innerText = urlParams.get('scrap') || '0';
-        document.getElementById('energy').innerText = (urlParams.get('energy') || '100') + '%';
-
-        function tgClose() {
-            tg.close();
+        // Функция парсинга данных
+        function updateDisplay() {
+            const urlParams = new URLSearchParams(window.location.search);
+            document.getElementById('bio').innerText = urlParams.get('bio') || '0';
+            document.getElementById('scrap').innerText = urlParams.get('scrap') || '0';
+            document.getElementById('energy').innerText = (urlParams.get('energy') || '100') + '%';
         }
 
+        updateDisplay();
+
         function startRaid() {
-            // Отправляем команду боту
             tg.sendData("raid_started");
         }
     </script>
